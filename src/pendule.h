@@ -7,8 +7,9 @@ class Pendule : public sf::Drawable, public sf::Transformable
 {
 public:
     Pendule(sf::Vector2f positionClouInitiale);
-    sf::Vector2f getPositionBoule() const;
-    sf::Vector2f getPositionClou() const;
+    void setAngle(float angle);
+    float getAngle() const;
+    float getLongueur() const;
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     float rayonBoule;

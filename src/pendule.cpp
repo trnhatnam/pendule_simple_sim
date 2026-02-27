@@ -20,14 +20,20 @@ Pendule::Pendule(sf::Vector2f positionClouInitiale):
     boule.setPosition({positionClou.x + static_cast<float>(longueurFil*sin(angleFil)), positionClou.y + static_cast<float>(longueurFil*cos(angleFil))});
 };
 
-sf::Vector2f Pendule::getPositionBoule() const{
-    return {positionClou.x + static_cast<float>(longueurFil*sin(angleFil)), positionClou.y + static_cast<float>(longueurFil*cos(angleFil))};
+void Pendule::setAngle(float angle)
+{
+    angleFil = angle;
+    fil.setRotation(-sf::radians(angleFil));
+    boule.setPosition({positionClou.x + static_cast<float>(longueurFil*sin(angleFil)), positionClou.y + static_cast<float>(longueurFil*cos(angleFil))});
+}
+
+float Pendule::getAngle() const{
+    return angleFil;
 };
 
-sf::Vector2f Pendule::getPositionClou() const{
-    return positionClou;
+float  Pendule::getLongueur() const{
+    return longueurFil;
 };
-
 
 void Pendule::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
