@@ -6,7 +6,7 @@
 class Pendule : public sf::Drawable, public sf::Transformable
 {
 public:
-    Pendule(sf::Vector2f positionClouInitiale);
+    Pendule(sf::Vector2f positionClouInitiale, float angleInitiale, float longueurFil);
     void setAngle(float angle);
     float getAngle() const;
     float getLongueur() const;

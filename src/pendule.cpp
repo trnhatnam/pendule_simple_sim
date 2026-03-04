@@ -1,11 +1,11 @@
 #include "pendule.h"
 #include <cmath>
 
-Pendule::Pendule(sf::Vector2f positionClouInitiale):
+Pendule::Pendule(sf::Vector2f positionClouInitiale, float angleInitiale, float longueurFil):
     rayonBoule(40.0f), 
     epaisseurFil(5.0f),
-    angleFil(M_PI_4),
-    longueurFil(300.f),
+    angleFil(angleInitiale),
+    longueurFil(longueurFil),
     positionClou(positionClouInitiale),
     fil({epaisseurFil, longueurFil}),
     boule(rayonBoule)
