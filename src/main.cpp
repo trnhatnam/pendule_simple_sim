@@ -5,6 +5,35 @@
 #include <iostream>
 #include <windows.h>
 
+
+float f(float u, float v, float gamma, float g, float L)
+{
+    return -(gamma*u + g/L*sin(v));
+}
+
+void update(float &u, float &v, float &h, float &gamma, float &g, float &L)
+{
+    // RK4
+
+    // variables intermédiaires
+    float k1 = f(u,v, gamma, g, L);
+    float l1 = u;
+    
+    float k2 = f(u+h*k1/2, v+h*l1/2, gamma, g, L);
+    float l2 = u + h*k1/2;
+
+    float k3 = f(u+h*k2/2, v+h*l2/2, gamma, g, L);
+    float l3 = u + h*k2/2;
+
+    float k4 = f(u+h*k3, v+h*l3, gamma, g, L);
+    float l4 = u + h*k3;
+
+    // update
+    u = u + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
+    v = v + (h/6)*(l1 + 2*l2 + 2*l3 + l4);
+
+}
+
 int main()
 {
     float fps = 30.0;
@@ -18,10 +47,11 @@ int main()
                 300); // longueur du fil en pixel
 
     // variables initiales
-    float u0 = 0;
-    float v0 = p1.getAngle();
-    float u1 = 0;
-    float v1 = 0;
+    float u = 0; // vitesse angulaire
+    float v = p1.getAngle();
+    
+    // paramètres
+    float gamma = 0.01;
     float h = 1.0/fps;
     float g = 9.81 * 100; // mètres -> pixel ?
     float l = p1.getLongueur() ; // dépend de l'échelle cm -> pixel
@@ -36,6 +66,7 @@ int main()
     if (pipe == INVALID_HANDLE_VALUE) 
         return 1;
 
+    // envoi de données vers python
     NamedPipeGuard pipeGuard(pipe); // RAII = Resource Acquisition Is Initialization
     std::cout << "En attente de connexion..." << std::endl;
     ConnectNamedPipe(pipeGuard.get(), NULL);
@@ -54,23 +85,13 @@ int main()
         window.draw(p1);
         window.display();
 
-        // Calcul de la prochaine position
-        u1 = u0 - (h*g/l) * sin(v0);
-        v1 = v0 + h*u1; // remplacer u0 par u1, lf Euler-Cromer
-        u0 = u1;
-        v0 = v1;
-
+        update(u,v, h, gamma, g, l);
+        p1.setAngle(v);
         
         // Écriture du message
-        WriteFile(pipeGuard.get(), &v0, sizeof(v0), &bytesWritten, NULL);
+        WriteFile(pipeGuard.get(), &v, sizeof(v), &bytesWritten, NULL);
         FlushFileBuffers(pipeGuard.get());
-
-        // Mise à jour
-        p1.setAngle(v0);
-        
-        
     }
 
-    
     return 0;
 }
